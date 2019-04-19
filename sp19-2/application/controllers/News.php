@@ -48,17 +48,22 @@ class News extends CI_Controller {
 
             if ($this->form_validation->run() === FALSE)
             {
-                //$this->load->view('templates/header', $data);
                 $this->load->view('news/create', $data);
-                //$this->load->view('templates/footer');
-
             }
             else
             {
-                $this->news_model->set_news();
-                //$this->load->view('templates/header', $data);
-                $this->load->view('news/success', $data);
-                //$this->load->view('templates/footer', $data);
+                //$this->news_model->set_news();
+                //$this->load->view('news/success', $data);
+                $slug = $this->news_model->set_news();
+                if($slug !== false){ //slug sent
+                    feedback('Data entered successfully!','info');
+                    redirect('news/view/' . $slug);
+                    
+                } else { //error
+                    feedback('Data NOT enterered','error'); //second argument denotes color, info is neutral error is red
+                    redirect('news/create');
+                    
+                }
             }
         }
 }
