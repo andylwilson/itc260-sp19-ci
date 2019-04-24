@@ -6,22 +6,31 @@ class News extends CI_Controller {
         public function __construct()
         {
                 parent::__construct();
+                $this->config->set_item('banner', 'News Section');
                 $this->load->model('news_model');
                 $this->load->helper('url_helper');
         }
 
         public function index()
         {
+                $this->config->set_item('title', 'Seattle Sports News'); //dynamically changing title in custom_config
+            
+                $nav1 = $this->config->item('nav1');
+            
                 $data['news'] = $this->news_model->get_news();
                 $data['title'] = 'News archive';
-
-                //$this->load->view('templates/header', $data);
                 $this->load->view('news/index', $data);
-                //$this->load->view('templates/footer', $data);
         }
 
         public function view($slug = NULL)
-        {
+        {                
+                //slug without dashes
+                $dashless_slug = str_replace("-", " ", $slug); 
+                //uppercase slug words
+                $dashless_slug = ucwords($dashless_slug);
+                //use dashless slug for title
+                $this->config->set_item('title', 'News flash - ' . $dashless_slug);
+            
                 $data['news_item'] = $this->news_model->get_news($slug);
 
                 if (empty($data['news_item']))
@@ -30,10 +39,7 @@ class News extends CI_Controller {
                 }
 
                 $data['title'] = $data['news_item']['title'];
-
-                //$this->load->view('templates/header', $data);
                 $this->load->view('news/view', $data);
-                //$this->load->view('templates/footer', $data);
         }
     
         public function create()
